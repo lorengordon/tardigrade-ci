@@ -3,9 +3,13 @@ OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:'])
 CURL ?= curl --fail -sSL
 XARGS ?= xargs -I {}
 BIN_DIR ?= ${HOME}/bin
-PIP_BIN_DIR ?= ${HOME}/.local/bin
 TMP ?= /tmp
 FIND_EXCLUDES ?= -not \( -name .terraform -prune \) -not \( -name .terragrunt-cache -prune \)
+
+# `pyenv which` returns the path to the executable, e.g. /root/.pyenv/versions/3.8.8/bin/python3
+# When using pyenv, we need to return `/root/.pyenv/versions/3.8.8/bin
+# Otherwise, we need to return `${HOME}/.local/bin`
+PIP_BIN_DIR ?= $(or $(shell dirname $$(dirname $$(pyenv which python3 2> /dev/null) 2> /dev/null) 2> /dev/null),${HOME}/.local)/bin
 
 PATH := $(BIN_DIR):$(PIP_BIN_DIR):${PATH}
 
